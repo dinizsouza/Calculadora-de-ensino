@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 App Matemática Completa - Marcelo Diniz</title>
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+        body{background:linear-gradient(135deg,#f8f9fa,#e9ecef);min-height:100vh;padding:15px;max-width:550px;margin:0 auto}
+        header{text-align:center;background:#2c3e50;color:white;padding:20px;border-radius:12px;margin-bottom:20px}
+        h1{font-size:22px;margin-bottom:6px}
+        .subtitulo{font-size:15px;opacity:.9}
+        #telaMenu{display:block}#telaJogo{display:none}
+        .menu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:15px}
+        .menu-btn{padding:18px 10px;border:none;border-radius:10px;font-size:16px;font-weight:bold;color:white;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 3px 8px rgba(0,0,0,.15)}
+        .menu-btn:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(0,0,0,.2)}
+        .btn-adicao{background:#28a745}.btn-subtracao{background:#fd7e14}.btn-multiplicacao{background:#007bff}.btn-divisao{background:#6f42c1}.btn-equacao{background:#e83e8c}.btn-dinheiro{background:#ffc107;color:#212529!important}
+        .caixa{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.15);margin-bottom:20px}
+        label{font-weight:bold;display:block;margin-bottom:8px;color:#333}
+        input{width:100%;padding:12px;border:2px solid #ddd;border-radius:8px;font-size:16px;margin-bottom:15px}
+        input:focus{outline:none;border-color:#3498db}
+        .conta{text-align:center;font-size:32px;font-weight:bold;color:#2c3e50;padding:25px 15px;background:#f1f3f5;border-radius:10px;margin:15px 0;word-wrap:break-word}
+        .resultado{text-align:center;font-size:19px;font-weight:bold;padding:15px;border-radius:8px;margin:15px 0;display:none}
+        .acertou{background:#d4edda;color:#155724;border:2px solid #c3e6cb}.errou{background:#f8d7da;color:#721c24;border:2px solid #f5c6cb}
+        .estatisticas{display:flex;justify-content:space-around;text-align:center;font-weight:bold;font-size:18px;margin-top:10px;flex-wrap:wrap;gap:10px}
+        .acerto{color:#28a745}.erro{color:#dc3545}
+        .botoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:15px}
+        button{padding:12px 18px;border:none;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer;transition:.2s}
+        button:hover{transform:scale(1.03)}.btn-voltar{background:#6c757d;color:white}.btn-responder{background:#28a745;color:white}.btn-limpar{background:#ffc107;color:#212529}.btn-nova{background:#3498db;color:white}
+        footer{text-align:center;color:#555;font-weight:bold;margin-top:20px}
+    </style>
+</head>
+<body>
+<header>
+    <h1>🧠 App Matemática Completa</h1>
+    <div class="subtitulo">Marcelo Diniz App - Escolha o que aprender</div>
+</header>
+<div id="telaMenu" class="caixa">
+    <label style="font-size:18px;text-align:center;display:block;margin-bottom:15px">Escolha uma operação:</label>
+    <div class="menu-grid">
+        <button class="menu-btn btn-adicao" onclick="iniciarJogo('adicao')">➕ Adição</button>
+        <button class="menu-btn btn-subtracao" onclick="iniciarJogo('subtracao')">➖ Subtração</button>
+        <button class="menu-btn btn-multiplicacao" onclick="iniciarJogo('multiplicacao')">✖️ Multiplicação</button>
+        <button class="menu-btn btn-divisao" onclick="iniciarJogo('divisao')">➗ Divisão</button>
+        <button class="menu-btn btn-equacao" onclick="iniciarJogo('equacao')">🔢 Equação Simples</button>
+        <button class="menu-btn btn-dinheiro" onclick="iniciarJogo('dinheiro')">💰 Dinheiro (R$)</button>
+    </div>
+</div>
+<div id="telaJogo" class="caixa">
+    <label for="nome">Seu nome:</label>
+    <input type="text" id="nome" placeholder="Digite seu nome..." oninput="salvarNome()">
+    <h3 id="tituloOperacao" style="text-align:center;color:#2c3e50;margin-bottom:10px"></h3>
+    <div class="conta" id="conta">5 + 3 = ?</div>
+    <input type="text" id="resposta" placeholder="Sua resposta..." onkeydown="if(event.key==='Enter')checarResposta()">
+    <div class="resultado" id="resultado"></div>
+    <div class="estatisticas">
+        <div>✅ Acertos: <span class="acerto" id="numAcertos">0</span></div>
+        <div>❌ Erros: <span class="erro" id="numErros">0</span></div>
+    </div>
+    <div class="botoes">
+        <button class="btn-voltar" onclick="voltarMenu()">⬅️ Voltar</button>
+        <button class="btn-responder" onclick="checarResposta()">✅ Responder</button>
+        <button class="btn-limpar" onclick="limparEstatisticas()">🔄 Limpar</button>
+        <button class="btn-nova" onclick="novaConta()">➡️ Próxima</button>
+    </div>
+</div>
+<footer>Marcelo Diniz App ©</footer>
+<script>
+let nome=localStorage.getItem("nomeMatematica")||"";
+let acertos=0,erros=0;
+let tipoOperacao="";
+let num1,num2,respostaCorreta,contaTexto;
+let ultimasContas=[];
+window.onload=()=>{document.getElementById("nome").value=nome};
+function iniciarJogo(tipo){tipoOperacao=tipo;acertos=erros=0;ultimasContas=[];document.getElementById("tituloOperacao").textContent=tituloOpcao(tipo);document.getElementById("telaMenu").style.display="none";document.getElementById("telaJogo").style.display="block";atualizarTela();novaConta();document.getElementById("resposta").focus()}
+function voltarMenu(){document.getElementById("telaJogo").style.display="none";document.getElementById("telaMenu").style.display="block"}
+function tituloOpcao(tipo){const nomes={adicao:"➕ Adição",subtracao:"➖ Subtração",multiplicacao:"✖️ Multiplicação",divisao:"➗ Divisão",equacao:"🔢 Equação Simples",dinheiro:"💰 Dinheiro (R$)"};return nomes[tipo]||"Operação"}
+function salvarNome(){nome=document.getElementById("nome").value;localStorage.setItem("nomeMatematica",nome)}
+function novaConta(){let tentativas=0;do{switch(tipoOperacao){case"adicao":gerarAdicao();break;case"subtracao":gerarSubtracao();break;case"multiplicacao":gerarMultiplicacao();break;case"divisao":gerarDivisao();break;case"equacao":gerarEquacao();break;case"dinheiro":gerarDinheiro();break}tentativas++}while(ultimasContas.includes(contaTexto)&&tentativas<60);ultimasContas.push(contaTexto);if(ultimasContas.length>18)ultimasContas.shift();document.getElementById("conta").textContent=contaTexto;document.getElementById("resposta").value="";document.getElementById("resultado").style.display="none";document.getElementById("resposta").focus()}
+function gerarAdicao(){num1=aleat(1,30);num2=aleat(1,30);respostaCorreta=num1+num2;contaTexto=`${num1} + ${num2} = ?`}
+function gerarSubtracao(){num1=aleat(1,30);num2=aleat(1,num1);respostaCorreta=num1-num2;contaTexto=`${num1} − ${num2} = ?`}
+function gerarMultiplicacao(){num1=aleat(1,10);num2=aleat(1,10);respostaCorreta=num1*num2;contaTexto=`${num1} × ${num2} = ?`}
+function gerarDivisao(){num2=aleat(1,10);num1=num2*aleat(1,10);respostaCorreta=num1/num2;contaTexto=`${num1} ÷ ${num2} = ?`}
+function gerarEquacao(){let x=aleat(2,12);let res=aleat(5,30);num1=res-x;respostaCorreta=x;contaTexto=`${num1} + ? = ${res}`}
+function gerarDinheiro(){let v1=(aleat(1,50)+aleat(0,99)/100).toFixed(2);let v2=(aleat(1,30)+aleat(0,99)/100).toFixed(2);let op=aleat(0,1);if(op===0){respostaCorreta=(parseFloat(v1)+parseFloat(v2)).toFixed(2);contaTexto=`R$${v1} + R$${v2} = ?`}else{if(parseFloat(v1)<parseFloat(v2))[v1,v2]=[v2,v1];respostaCorreta=(parseFloat(v1)-parseFloat(v2)).toFixed(2);contaTexto=`R$${v1} − R$${v2} = ?`}}
+function aleat(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+function checarResposta(){let respUsuario=document.getElementById("resposta").value.trim().replace(",",".");const resEl=document.getElementById("resultado");const nomeUser=nome||"Amigo(a)";let certo=false;if(tipoOperacao==="dinheiro"){respUsuario=parseFloat(respUsuario).toFixed(2);certo=respUsuario===respostaCorreta}else{const num=parseFloat(respUsuario);certo=!isNaN(num)&&num===respostaCorreta}resEl.style.display="block";if(certo){acertos++;resEl.textContent=`✅ Parabéns ${nomeUser}! Acertou! 🎉`;resEl.className="resultado acertou"}else{erros++;let respExib=(tipoOperacao==="dinheiro")?`R$${respostaCorreta}`:respostaCorreta;resEl.textContent=`❌ Errou ${nomeUser}! Certa: ${respExib}`;resEl.className="resultado errou"}atualizarTela();setTimeout(novaConta,1600)}
+function atualizarTela(){document.getElementById("numAcertos").textContent=acertos;document.getElementById("numErros").textContent=erros}
+function limparEstatisticas(){if(confirm("🔄 Zerar acertos/erros?")){acertos=erros=0;ultimasContas=[];atualizarTela();novaConta()}}
+</script>
+</body>
+</html>
