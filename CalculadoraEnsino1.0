@@ -29,7 +29,6 @@
         h1 { font-size: 22px; margin-bottom: 6px; }
         .subtitulo { font-size: 15px; opacity: 0.9; }
 
-        /* 📱 MENU */
         #telaMenu { display: block; }
         #telaJogo { display: none; }
 
@@ -84,7 +83,6 @@
             border-color: #3498db;
         }
 
-        /* 🧮 Conta */
         .conta {
             text-align: center;
             font-size: 32px;
@@ -108,7 +106,6 @@
         .acertou { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
         .errou { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
 
-        /* 📊 Estatísticas */
         .estatisticas {
             display: flex;
             justify-content: space-around;
@@ -122,7 +119,6 @@
         .acerto { color: #28a745; }
         .erro { color: #dc3545; }
 
-        /* 🟩 Botões */
         .botoes {
             display: flex;
             gap: 10px;
@@ -154,13 +150,11 @@
     </style>
 </head>
 <body>
-
 <header>
     <h1>🧠 App Matemática Completa</h1>
     <div class="subtitulo">Marcelo Diniz App - Escolha o que aprender</div>
 </header>
 
-<!-- 📋 TELA MENU -->
 <div id="telaMenu" class="caixa">
     <label style="font-size: 18px; text-align:center; display:block; margin-bottom:15px;">Escolha uma operação:</label>
     <div class="menu-grid">
@@ -173,7 +167,6 @@
     </div>
 </div>
 
-<!-- 🎮 TELA JOGO -->
 <div id="telaJogo" class="caixa">
     <label for="nome">Seu nome:</label>
     <input type="text" id="nome" placeholder="Digite seu nome..." oninput="salvarNome()">
@@ -186,13 +179,11 @@
 
     <div class="resultado" id="resultado"></div>
 
-    <!-- 📊 Estatísticas -->
     <div class="estatisticas">
         <div>✅ Acertos: <span class="acerto" id="numAcertos">0</span></div>
         <div>❌ Erros: <span class="erro" id="numErros">0</span></div>
     </div>
 
-    <!-- 🛠️ Botões -->
     <div class="botoes">
         <button class="btn-voltar" onclick="voltarMenu()">⬅️ Voltar</button>
         <button class="btn-responder" onclick="checarResposta()">✅ Responder</button>
@@ -214,7 +205,6 @@ window.onload = () => {
     document.getElementById("nome").value = nome;
 };
 
-// 📂 MENU
 function iniciarJogo(tipo) {
     tipoOperacao = tipo;
     acertos = 0; erros = 0; ultimasContas = [];
@@ -238,13 +228,11 @@ function tituloOpcao(tipo) {
     return nomes[tipo] || "Operação";
 }
 
-// 💾 Nome
 function salvarNome() {
     nome = document.getElementById("nome").value;
     localStorage.setItem("nomeMatematica", nome);
 }
 
-// ✨ GERAR CONTA POR TIPO
 function novaConta() {
     let tentativas = 0;
     do {
@@ -267,13 +255,12 @@ function novaConta() {
     document.getElementById("resposta").focus();
 }
 
-// 🧮 Funções de cada tipo
 function gerarAdicao() {
     num1 = aleat(1, 30); num2 = aleat(1, 30);
     respostaCorreta = num1 + num2; contaTexto = `${num1} + ${num2} = ?`;
 }
 function gerarSubtracao() {
-    num1 = aleat(1, 30); num2 = aleat(1, num1); // não negativo
+    num1 = aleat(1, 30); num2 = aleat(1, num1);
     respostaCorreta = num1 - num2; contaTexto = `${num1} − ${num2} = ?`;
 }
 function gerarMultiplicacao() {
@@ -281,7 +268,7 @@ function gerarMultiplicacao() {
     respostaCorreta = num1 * num2; contaTexto = `${num1} × ${num2} = ?`;
 }
 function gerarDivisao() {
-    num2 = aleat(1, 10); num1 = num2 * aleat(1, 10); // exata
+    num2 = aleat(1, 10); num1 = num2 * aleat(1, 10);
     respostaCorreta = num1 / num2; contaTexto = `${num1} ÷ ${num2} = ?`;
 }
 function gerarEquacao() {
@@ -304,7 +291,6 @@ function gerarDinheiro() {
 }
 function aleat(min,max) { return Math.floor(Math.random()*(max-min+1))+min; }
 
-// ✅ CHECAR RESPOSTA
 function checarResposta() {
     let respUsuario = document.getElementById("resposta").value.trim().replace(",",".");
     const resEl = document.getElementById("resultado");
